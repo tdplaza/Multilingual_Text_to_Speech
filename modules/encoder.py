@@ -194,7 +194,7 @@ class GeneratedConvolutionalEncoder(torch.nn.Module):
         self._embedding = Embedding(groups, embedding_dim)
 
     def forward(self, x, x_lenghts=None, x_langs=None):
-
+        print(f'encoder.py line 197 x_langs.shape {x_langs.shape}')
         # x_langs is specified during inference with batch size 1, so we need to 
         # expand the single language to create complete groups (all langs. in parallel)
         if x_langs is not None and x_langs.shape[0] == 1:
@@ -213,6 +213,8 @@ class GeneratedConvolutionalEncoder(torch.nn.Module):
         if x_langs is not None and x_langs.shape[0] == 1:
             xr = torch.zeros(1, x.shape[1], x.shape[2], device=x.device)
             x_langs_normed = x_langs / x_langs.sum(2, keepdim=True)[0]
+            print(f'encoder.py line 197 x_langs_normed.shape {x_langs.shape}')
+
             for l in range(self._groups):
                 w = x_langs_normed[0,:,l].reshape(-1,1)
                 xr[0] += w * x[l]
