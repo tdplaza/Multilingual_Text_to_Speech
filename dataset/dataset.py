@@ -298,9 +298,13 @@ class TextToSpeechCollate():
             if speakers is not None: speakers = speakers[sorted_idxs]
             if languages is not None: 
                 languages = languages[sorted_idxs]
+                print(f'dataset.py line 301 languages.shape before {languages.shape}')
                 # convert a vector of language indices into a vector of one-hots (used as weight vectors for accent control)
                 one_hots = torch.zeros(languages.size(0), languages.size(1), hp.language_number).zero_()
+                print(f'dataset.py line 304 one_hots.shape {one_hots.shape}')
                 languages = one_hot.scatter_(2, languages.data, 1)
+                print(f'dataset.py line 304 languages.shape after {languages.shape}')
+
         else:
             sorted_idxs = range(batch_size)
         
