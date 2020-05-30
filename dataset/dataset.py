@@ -261,7 +261,7 @@ class TextToSpeechDataset(torch.utils.data.Dataset):
 
 class TextToSpeechCollate():
     """Collate function for TextToSpeechDataset.
-    
+
     Arguments:
         sort_by_text_length (boolean): If True, returns batch ordered by utterance lengths (suitable for RNNs).
     """
@@ -283,7 +283,7 @@ class TextToSpeechCollate():
             utterance_lengths.append(len(u))
             spectrogram_lengths.append(len(a[0]))
             if spectrogram_lengths[-1] > max_frames:
-                max_frames = spectrogram_lengths[-1] 
+                max_frames = spectrogram_lengths[-1]
 
         # convert collected lists to tensors
         utterance_lengths = torch.LongTensor(utterance_lengths)
@@ -298,16 +298,13 @@ class TextToSpeechCollate():
             if speakers is not None: speakers = speakers[sorted_idxs]
             if languages is not None: 
                 languages = languages[sorted_idxs]
-                print(f'dataset.py line 301 languages.shape before {languages.shape}')
                 # convert a vector of language indices into a vector of one-hots (used as weight vectors for accent control)
                 one_hots = torch.zeros(languages.size(0), languages.size(1), hp.language_number).zero_()
-                print(f'dataset.py line 304 one_hots.shape {one_hots.shape}')
-                languages = one_hot.scatter_(2, languages.data, 1)
-                print(f'dataset.py line 304 languages.shape after {languages.shape}')
+                languages = one_hots.scatter_(2, languages.data, 1)
 
         else:
             sorted_idxs = range(batch_size)
-        
+
         # zero-pad utterances, spectrograms
         utterances = torch.zeros(batch_size, max(utterance_lengths), dtype=torch.long)
         mel_spectrograms = torch.zeros(batch_size, hp.num_mels, max_frames, dtype=torch.float)
@@ -324,3 +321,52 @@ class TextToSpeechCollate():
             stop_tokens[i, a[0].size - hp.stop_frames:] = 1
 
         return utterances, utterance_lengths, mel_spectrograms, lin_spectrograms, spectrogram_lengths, stop_tokens, speakers, languages
+    #
+    #
+    #
+    #
+    # import torch
+    # import numpy as np
+    #
+    # language_ids=[1, 0, 0, 1, 1, 1]
+    #
+    # language_ids = torch.LongTensor(language_ids)
+    # language_ids = language_ids.unsqueeze(-1).expand(language_ids.shape[0], 10)
+    # language_ids = language_ids.unsqueeze(-1).expand((language_ids.shape[0], 10, 1))
+    # one_hots = torch.zeros(language_ids.size(0), language_ids.size(1), 2).zero_()
+    # languages = one_hots.scatter_(dim=2, index=language_ids, value=1)
+    #
+    #
+    # language_ids = torch.LongTensor(language_ids)
+    # language_ids = language_ids.unsqueeze(1).expand((-1, inputs.size(1)))
+    # languages = languages.expand(size=(6, 50,2))
+    # languages[0,:,0]
+    # languages.shape
+    #
+    # print(f'dataset.py line 301 languages.shape before {languages.shape}')
+    # # convert a vector of language indices into a vector of one-hots (used as weight vectors for accent control)
+    # one_hots = torch.zeros(languages.size(0), languages.size(1), 2).zero_()
+    # one_hots.shape
+    # languages.shape
+    # print(f'dataset.py line 304 one_hots.shape {one_hots.shape}')
+    # languages = one_hots.scatter_(dim=2, index=languages.data, value=1)
+    # print(f'dataset.py line 304 languages.shape after {languages.shape}')
+    #
+    #
+    #
+    # text_inputs =torch.from_numpy(np.array(text_inputs))
+    # #### ENCODING
+    # mask_inputs = text_inputs >= 93  ## all characters which have id >=94 is English chars
+    #
+    #
+    # ### match dtype of mask input as encoder output
+    # mask_inputs = mask_inputs.type(torch.int16)
+    #
+    # ko_mask_inputs.shape
+    # ### expand mask_input matrix to match encoder output' size
+    # ko_mask_inputs = mask_inputs.unsqueeze(-1).expand_as(text_inputs)
+    # ### reverse korean mask to get english mask
+    # en_mask_inputs = torch.abs(torch.add(ko_mask_inputs, -1))
+    #
+    #
+    #
