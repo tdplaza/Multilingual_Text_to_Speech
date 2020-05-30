@@ -217,6 +217,9 @@ class Decoder(torch.nn.Module):
 
     def inference(self, encoded_input, speaker, language):
         mask = utils.lengths_to_mask(torch.LongTensor([encoded_input.size(1)]))
+
+        print(f'tacotron2.py line 219 encoded_input.shape {encoded_input.shape}')
+        print(f'tacotron2.py line 219 mask {mask}')
         spectrogram, _, _ = self._decode(encoded_input, mask, None, 0.0, speaker, language)
         return spectrogram
      
