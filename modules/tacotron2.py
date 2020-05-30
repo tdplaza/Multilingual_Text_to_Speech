@@ -153,7 +153,6 @@ class Decoder(torch.nn.Module):
         inference = target is None
         max_frames = self._max_frames if inference else target.size(2) 
         input_device = encoded_input.device
-        print(f'tacotron2.py line 156 encoded_input.shape {encoded_input.shape}')
 
         # obtain speaker and language embeddings (or a dummy tensor)
         if hp.multi_speaker and self._speaker_embedding is not None:
