@@ -147,21 +147,21 @@ class Decoder(torch.nn.Module):
 
     def _decode(self, encoded_input, mask, target, teacher_forcing_ratio, speaker, language):
         """Perform decoding of the encoded input sequence."""
-        print(f'tacotron2.py line 150 speaker {speaker}')
-        print(f'tacotron2.py line 150 speaker.shape {speaker.shape}')
 
         batch_size = encoded_input.size(0)
         max_length = encoded_input.size(1)
         inference = target is None
         max_frames = self._max_frames if inference else target.size(2) 
         input_device = encoded_input.device
+        print(f'tacotron2.py line 156 encoded_input.shape {encoded_input.shape}')
 
         # obtain speaker and language embeddings (or a dummy tensor)
         if hp.multi_speaker and self._speaker_embedding is not None:
             encoded_input = self._add_conditional_embedding(encoded_input, self._speaker_embedding, speaker)
         if hp.multi_language and self._language_embedding is not None:
             encoded_input = self._add_conditional_embedding(encoded_input, self._language_embedding, language)
-        
+        print(f'tacotron2.py line 163 encoded_input.shape {encoded_input.shape}')
+
         # attention and decoder states initialization  
         context = self._attention.reset(encoded_input, batch_size, max_length, input_device)
         h_att, c_att, h_gen, c_gen = self._decoder_init(batch_size, input_device)      
