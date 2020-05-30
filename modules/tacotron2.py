@@ -147,6 +147,8 @@ class Decoder(torch.nn.Module):
 
     def _decode(self, encoded_input, mask, target, teacher_forcing_ratio, speaker, language):
         """Perform decoding of the encoded input sequence."""
+        print(f'tacotron2.py line 150 speaker {speaker}')
+        print(f'tacotron2.py line 150 speaker.shape {speaker.shape}')
 
         batch_size = encoded_input.size(0)
         max_length = encoded_input.size(1)
